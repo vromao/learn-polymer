@@ -115,6 +115,11 @@
       Change address: <input type="text" value="{{address.street}}" />
 
       <button on-tap="changeAddress">Change Address</button>
+      
+      <hr>
+
+      Change address typping: <input type="text" value="{{address.street::change}}">
+      <!-- a forma acima é um jeito de utiliziar tags nativas para colocarmos o binding, onde o evento da propria tag ira fazer o papel de disparar o binding e atualizar as referencias -->
     </div>
 
     <div>
