@@ -1,0 +1,70 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+
+<dom-module id="poke-info">
+    <template>
+        <style>
+            input {
+                width: 100%;
+            }
+        </style>
+
+        <!-- se quiser lidar com a resposta, use on-response -->
+        <iron-ajax auto url="{{url}}" handle-as="json" last-response="{{response}}"></iron-ajax>
+
+        <div> 
+            <p>Escreva o nome do Pokemon ou numero e pressione Enter</p>
+            <input type="text" value="{{stringInput::change}}" placeholder="Após escrever pressione Enter">
+        </div>
+
+        <div>
+            <p>Nome: [[response.name]]</p>
+            
+            <div>   
+                <p>Type:</p>
+                <ul>
+                    <template is="dom-repeat" items="[[response.types]]">
+                        <li>[[item.type.name]]</li>
+                    </template>
+                </ul>
+            </div>
+
+            <div>
+                <p>Stats:</p>
+                <ul>
+                    <template is="dom-repeat" items="[[response.stats]]">
+                        <li>[[item.stat.name]]: [[item.base_stat]]</li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'poke-info',
+        properties: {
+            stringInput: {
+                type: String,
+            },
+            baseUrl: {
+                type: String,
+                value: 'https://pokeapi.co/api/v2/'
+            },
+            _url: String
+        },
+        observers: ['_mountUrl(stringInput)'],
+        _mountUrl: function(stringInput) {
+            var urlParts = urlFinal = '';
+
+            if(stringInput) {
+                urlParts = 'pokemon/' + stringInput;
+            };
+
+            urlFinal = this.baseUrl + urlParts;
+
+            this.set('url', urlFinal);
+        }        
+    });
+</script>
