@@ -1,0 +1,40 @@
+<script>
+    var AppBehaviors = AppBehaviors || {};
+    AppBehaviors.pressedBehaviors = {
+        properties: {
+            pressed: {
+                type: Boolean,
+                default: false,
+                readOnly: true
+            }
+        },
+
+        listeners: {
+            // evento de mouse down não funciona no mobile
+            mousedown: '_addPressed',
+            mouseup: '_removePressed'
+        },
+
+        created: function() {
+            console.log('an object with pressed behavior is alive!');
+        },
+
+        _addPressed: function() {
+            this.classList.add('pressed');
+            this._onPressStart();
+        },
+
+        _removePressed: function() {
+            this.classList.remove('pressed');
+            this._onPressEnd();
+        },
+
+        _onPressStart: function() {
+            // abstract
+        },
+
+        _onPressEnd: function() {
+            // abstract
+        }
+    };
+</script>
