@@ -1,0 +1,101 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../neon-animation/animations/slide-from-top-animation.html">
+<!-- Podemos importar uma animação criada por nós, sem ser as existentes nos imports acima -->
+<link rel="import" href="../animations/app-resize-animation.html">
+
+<!-- o animation runner behavior é quem nos usamos para rodar as animações -->
+<link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
+
+<dom-module id="ball-element">
+    <template>
+        <style>
+            :host {
+                display: none;
+                width: 100px;
+                height: 100px;
+                background-color: red;
+                border-radius: 50%;
+            }
+        </style>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'ball-element',
+        behaviors: [Polymer.NeonAnimationRunnerBehavior],
+        ready: function() {
+            this.show();
+        },
+        properties: {
+            load: {
+                type: Boolean
+            },
+            animationConfig: {
+                value: function() {
+                    return {
+                        // pode ser um objeto caso use apenas uma animação
+                        'entry': [
+                            {
+                                name: 'slide-from-top-animation',
+                                node: this,
+                                timing: { duration: 800 } // é possivel utilizar a propriedade timing para configurarmos a duração, delay entre outraa coisas da animação
+                            },
+                            {
+                                name: 'fade-in-animation',
+                                node: this,
+                                timing: { delay: 100, duration: 300 } // aqui por exemplo podemos combinar o delay e duração, para que as duas animações aconteçam ao mesmo tempo, porem uma será executada um pouco depois da animação acima.
+                            }                            
+                        ],
+                        'myAnimation': {
+                            name: 'app-resize-animation',
+                            node: this
+                        },
+                        'exit': {
+                            name: 'fade-out-animation',
+                            node: this
+                        }
+                    }
+                }
+            }
+        },
+        listeners: { 
+            // aqui nos colocamos um listener para ouvir o elemento e assim que a animação terminar, rodar o callback passado ali
+            'neon-animation-finish': '_onNeonAnimationFinish',
+            tap: 'hide'
+        },
+        show: function() { // metodos para mostrar/esconder a inimação. Esses métodos inciam e terminam a animação.
+            this.load = true;
+            this.style.display = 'block'; // removemos o none do elemento antes de iniciar a animação
+            this.cancelAnimation(); // esse metodo é um tipo de hack, para garantir que animação não cause bugs inesperados, imaginando um caso onde houvesse um botão para dar o trigger na animação e nós clicassemos duas vezes, teriamos problemas com a animação. 
+            this.playAnimation('entry'); // aqui nós passamos qual animação iremos iniciar (das disponiveis no animation config)
+        },
+        hide: function() {
+            this.load = false;
+            this.cancelAnimation();
+            this.playAnimation('exit');
+        },
+        myAnimation: function() {
+            // para ver a execução basta selecionar a tag do component no dev tools e rodar no console $0.myAnimation
+            if(this.load) {
+                this.cancelAnimation();
+                this.playAnimation('myAnimation');
+            }
+        },
+        _onNeonAnimationFinish: function() {
+            // verificamos se a animação não esta mesmo acontecendo, para poder dar o display none no momento certo
+            if (!this.load) {
+                this.style.display = 'none';
+            }
+        }
+    });
+</script>
+
+<!-- Se não utilizar ready do lifecycle do Polymer, é possivel iniciar um elemento onde ele esta sendo chamado (no index por exemplo), da seguinte forma:
+<script>
+    var ballElement = document.querySelector('ball-element');
+
+    ballElement.show();
+</script> -->
