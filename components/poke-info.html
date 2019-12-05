@@ -7,17 +7,21 @@
             input {
                 width: 100%;
             }
+
+            [hidden] {
+                display: none;
+            }
         </style>
 
-        <!-- se quiser lidar com a resposta, use on-response -->
-        <iron-ajax auto url="{{url}}" handle-as="json" last-response="{{response}}"></iron-ajax>
+        <!-- se quiser lidar com a resposta, use on-response. Possui outras propriedades também como params, se quiser passar parametros para essa url -->
+        <iron-ajax auto url="{{_url}}" handle-as="json" last-response="{{response}}"></iron-ajax>
 
         <div> 
             <p>Escreva o nome do Pokemon ou numero e pressione Enter</p>
             <input type="text" value="{{stringInput::change}}" placeholder="Após escrever pressione Enter">
         </div>
 
-        <div>
+        <div hidden="{{_hideInfos}}">
             <p>Nome: [[response.name]]</p>
             
             <div>   
@@ -52,7 +56,11 @@
                 type: String,
                 value: 'https://pokeapi.co/api/v2/'
             },
-            _url: String
+            _url: String,
+            _hideInfos: {
+                type: Boolean,
+                value: true
+            }
         },
         observers: ['_mountUrl(stringInput)'],
         _mountUrl: function(stringInput) {
@@ -64,7 +72,8 @@
 
             urlFinal = this.baseUrl + urlParts;
 
-            this.set('url', urlFinal);
+            this.set('_hideInfos', false);
+            this.set('_url', urlFinal);
         }        
     });
 </script>
