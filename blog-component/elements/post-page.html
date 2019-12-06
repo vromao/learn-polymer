@@ -1,0 +1,73 @@
+<!--
+ Copyright 2017 Google Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<link rel="import" href="../../../iron-ajax/iron-ajax.html">
+
+<dom-module id="post-page">
+
+  <template>
+
+    <style>
+      :host {
+        display: none;
+      }
+
+      :host([active]) {
+        display: block;
+      }
+
+      p {
+        line-height: 33.18px;
+        white-space: pre-wrap;
+      }
+    </style>
+
+    <iron-ajax
+      auto
+      url="[[_computeURL(post)]]"
+      handle-as="json"
+      last-response="{{postContent}}"></iron-ajax>
+
+    <h2>[[postContent.title]]</h2>
+    <p>[[postContent.intro_text]]</p>
+    <img src="[[postContent.img]]" alt="[[postContent.img_alt]]" />
+    <p>[[postContent.body_text]]</p>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'post-page',
+
+      properties: {
+
+        active: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+
+      },
+
+      _computeURL: function(post) {
+        return `data/posts/${post}.json`;
+      }
+
+    });
+  </script>
+
+</dom-module>

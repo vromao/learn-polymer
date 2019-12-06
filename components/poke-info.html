@@ -20,15 +20,15 @@
         <!-- se quiser lidar com a resposta, use on-response. Possui outras propriedades também como params, se quiser passar parametros para essa url -->
         <iron-ajax auto url="{{_url}}" handle-as="json" last-response="{{response}}"></iron-ajax>
 
-        <div> 
+        <div>
             <p>Escreva o nome do Pokemon ou numero e pressione Enter</p>
             <input type="text" value="{{stringInput::change}}" placeholder="Após escrever pressione Enter">
         </div>
 
         <div hidden="{{_hideInfos}}">
             <p>Nome: [[response.name]]</p>
-            
-            <div>   
+
+            <div>
                 <p>Type:</p>
                 <ul>
                     <template is="dom-repeat" items="[[response.types]]">
@@ -47,37 +47,37 @@
             </div>
         </div>
     </template>
-</dom-module>
+    
+    <script>
+        Polymer({
+            is: 'poke-info',
+            properties: {
+                stringInput: {
+                    type: String,
+                },
+                baseUrl: {
+                    type: String,
+                    value: 'https://pokeapi.co/api/v2/'
+                },
+                _url: String,
+                _hideInfos: {
+                    type: Boolean,
+                    value: true
+                }
+            },
+            observers: ['_mountUrl(stringInput)'],
+            _mountUrl: function (stringInput) {
+                var urlParts = urlFinal = '';
 
-<script>
-    Polymer({
-        is: 'poke-info',
-        properties: {
-            stringInput: {
-                type: String,
-            },
-            baseUrl: {
-                type: String,
-                value: 'https://pokeapi.co/api/v2/'
-            },
-            _url: String,
-            _hideInfos: {
-                type: Boolean,
-                value: true
+                if (stringInput) {
+                    urlParts = 'pokemon/' + stringInput;
+                };
+
+                urlFinal = this.baseUrl + urlParts;
+
+                this.set('_hideInfos', false);
+                this.set('_url', urlFinal);
             }
-        },
-        observers: ['_mountUrl(stringInput)'],
-        _mountUrl: function(stringInput) {
-            var urlParts = urlFinal = '';
-
-            if(stringInput) {
-                urlParts = 'pokemon/' + stringInput;
-            };
-
-            urlFinal = this.baseUrl + urlParts;
-
-            this.set('_hideInfos', false);
-            this.set('_url', urlFinal);
-        }        
-    });
-</script>
+        });
+    </script>
+</dom-module>

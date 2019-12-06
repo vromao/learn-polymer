@@ -17,6 +17,7 @@
     "iron-ajax": "Polymerelements/iron-ajax#^1.0.0",
     "neon-elements": "Polymerelements/neon-elements#^1.0.0",
     "iron-pages": "Polymerelements/iron-pages#^1.0",
-    "iron-flex-layout": "Polymerelements/iron-flex-layout#^1.0"
+    "iron-flex-layout": "Polymerelements/iron-flex-layout#^1.0",
+    "carbon-route": "Polymerelements/carbon-route#~0.8.4"
   }
 }

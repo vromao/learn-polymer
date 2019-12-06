@@ -115,7 +115,7 @@
       Change address: <input type="text" value="{{address.street}}" />
 
       <button on-tap="changeAddress">Change Address</button>
-      
+
       <hr>
 
       Change address typping: <input type="text" value="{{address.street::change}}">
@@ -135,71 +135,71 @@
     </div>
 
   </template>
+
+  <script>
+    Polymer({
+      is: "user-info",
+      behaviors: [AppBehaviors.pressedBehaviors], // Behavior é uma forma de adicionar comportamentos ao componente, shareando/usando o código do behavior passando no array (que deve ser importado). O behavior pode definir callbacks, propriedades, atributos defaults, observers e listeners. Para o ciclo de vida de eventos a callback é chamada para cada behavior na ordem em que estiver no array. Se houver um metodo (implementação de um abstrato) com a mesma referencia no componente para o behavior, ele irá rexecutar primeio a heranaça existente no behavior, parar depois executar o metodo implementado abstrato que existe lá, porem esta implementado aqui.
+      properties: {
+        first: String, // define que a propriedade deve receber um valor que seja String
+        last: String,
+        age: { // forma de escrever uma propriedade com mais valores
+          type: Number,
+          value: 42, // valor default da propriedade caso não seja passado nada
+          observer: '_ageChanged', // observador é ativado sempre que a propriedade muda, chamando a função passada. O _ significa para dizer que essa função é para uso interno deste elemento
+          notify: true, // serve para fazer o despatch desse evento. Faz parte do two-way binding do Polymer. Sempre que quiser two-way, usar ele
+        },
+        fullname: {
+          computed: '_computeFullName(first, last)' // a pripriedade serve para computar/combinar outras propriedades. Se algumas das propriedades passadas por parametro mudarem de valor, essa função será rodada novamente.
+        },
+        address: {
+          type: Object,
+          value: function () {
+            return { street: 'Rua teste', number: '70' }
+          }
+        },
+        count: {
+          type: Number,
+          readOnly: true, // para criar uma propriedade que é visivel mas não pode ser alterada
+          reflectToAttribute: true,
+        },
+        relatives: {
+          type: Array,
+          value: function () {
+            return ['Marcelo', 'Marcos', 'João'];
+          }
+        },
+      },
+
+      _computeFullName: function (first, last) {
+        return first + ' ' + last;
+      },
+      _ageChanged: function (age) {
+        return age;
+      },
+      changeBorderColor: function (color) {
+        this.classList.toggle('valid-border-color');
+      },
+      increaseBall: function () {
+        this.classList.toggle('increase');
+      },
+      changeAddress: function () {
+        // forma imperativa
+        // esta é a forma de atualizar/sincronizar uma propriedade dentro de um objeto (propriedade) no data binding. O polymer sabe que esse binding é um notifyPath, porem para não ser onerozo ele preciza saber qual é a propriedade que vc quer criar o setter no property effects. O this.set abaixo é um short-hand para o exemplo comentado a seguir.
+        this.set('address.street', 'Rua atualizada');
+
+        // this.address.street = 'Rua atualizada';
+        // this.notifyPath('address.street', this.address.street);
+      },
+
+      observers: ['receiveFavoriteRelative(relatives.*, 0)'], // passa o metodo que será rodado e que esta assistindo a propriedade relatives na posição que receber do Array, passando o index 0. Outra forma é não usar o observer e usar um computed binding.
+      receiveFavoriteRelative: function (changeRelative, index) {
+        this.favoriteRelative = changeRelative.base[index];
+      },
+
+      _onPressEnd: function () {
+        alert('implementando metodo abstrato do behavior');
+      }
+    });
+  </script>
 </dom-module>
-
-<script>
-  Polymer({
-    is: "user-info",
-    behaviors: [AppBehaviors.pressedBehaviors], // Behavior é uma forma de adicionar comportamentos ao componente, shareando/usando o código do behavior passando no array (que deve ser importado). O behavior pode definir callbacks, propriedades, atributos defaults, observers e listeners. Para o ciclo de vida de eventos a callback é chamada para cada behavior na ordem em que estiver no array. Se houver um metodo (implementação de um abstrato) com a mesma referencia no componente para o behavior, ele irá rexecutar primeio a heranaça existente no behavior, parar depois executar o metodo implementado abstrato que existe lá, porem esta implementado aqui.
-    properties: {
-      first: String, // define que a propriedade deve receber um valor que seja String
-      last: String,
-      age: { // forma de escrever uma propriedade com mais valores
-        type: Number,
-        value: 42, // valor default da propriedade caso não seja passado nada
-        observer: '_ageChanged', // observador é ativado sempre que a propriedade muda, chamando a função passada. O _ significa para dizer que essa função é para uso interno deste elemento
-        notify: true, // serve para fazer o despatch desse evento. Faz parte do two-way binding do Polymer. Sempre que quiser two-way, usar ele
-      },
-      fullname: {
-        computed: '_computeFullName(first, last)' // a pripriedade serve para computar/combinar outras propriedades. Se algumas das propriedades passadas por parametro mudarem de valor, essa função será rodada novamente.
-      },
-      address: {
-        type: Object,
-        value: function () {
-          return { street: 'Rua teste', number: '70' }
-        }
-      },
-      count: {
-        type: Number,
-        readOnly: true, // para criar uma propriedade que é visivel mas não pode ser alterada
-        reflectToAttribute: true,
-      },
-      relatives: {
-        type: Array,
-        value: function () {
-          return ['Marcelo', 'Marcos', 'João'];
-        }
-      },
-    },
-
-    _computeFullName: function (first, last) {
-      return first + ' ' + last;
-    },
-    _ageChanged: function (age) {
-      return age;
-    },
-    changeBorderColor: function (color) {
-      this.classList.toggle('valid-border-color');
-    },
-    increaseBall: function () {
-      this.classList.toggle('increase');
-    },
-    changeAddress: function () {
-      // forma imperativa
-      // esta é a forma de atualizar/sincronizar uma propriedade dentro de um objeto (propriedade) no data binding. O polymer sabe que esse binding é um notifyPath, porem para não ser onerozo ele preciza saber qual é a propriedade que vc quer criar o setter no property effects. O this.set abaixo é um short-hand para o exemplo comentado a seguir.
-      this.set('address.street', 'Rua atualizada');
-
-      // this.address.street = 'Rua atualizada';
-      // this.notifyPath('address.street', this.address.street);
-    },
-
-    observers: ['receiveFavoriteRelative(relatives.*, 0)'], // passa o metodo que será rodado e que esta assistindo a propriedade relatives na posição que receber do Array, passando o index 0. Outra forma é não usar o observer e usar um computed binding.
-    receiveFavoriteRelative: function (changeRelative, index) {
-      this.favoriteRelative = changeRelative.base[index];
-    },
-
-    _onPressEnd: function() {
-      alert('implementando metodo abstrato do behavior');
-    }
-  });
-</script>
